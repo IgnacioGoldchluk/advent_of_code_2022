@@ -1,7 +1,7 @@
 use std::fs;
 
 pub fn solution() {
-    let result: u64 = fs::read_to_string("day2_input")
+    let result: u64 = fs::read_to_string("inputs/day2_input")
         .unwrap()
         .split("\n")
         .map(scores_part1)
@@ -9,7 +9,7 @@ pub fn solution() {
 
     println!("Total part1: {}", result);
 
-    let result: u64 = fs::read_to_string("day2_input")
+    let result: u64 = fs::read_to_string("inputs/day2_input")
         .unwrap()
         .split("\n")
         .map(scores_part2)

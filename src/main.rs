@@ -1,5 +1,6 @@
+#![allow(dead_code)]
 mod solutions;
 
 fn main() {
-    solutions::day2::solution();
+    solutions::day3::solution();
 }

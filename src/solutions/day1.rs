@@ -1,7 +1,7 @@
 use std::fs;
 
 pub fn solution() {
-    let mut calories = fs::read_to_string("day1_input")
+    let mut calories = fs::read_to_string("inputs/day1_input")
         .unwrap()
         .split("\n\n")
         .map(to_calories)
