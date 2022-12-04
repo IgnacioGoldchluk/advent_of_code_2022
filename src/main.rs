@@ -2,5 +2,5 @@
 mod solutions;
 
 fn main() {
-    solutions::day3::solution();
+    solutions::day4::solution();
 }
