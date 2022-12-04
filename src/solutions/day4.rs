@@ -24,29 +24,20 @@ impl CleaningRange {
     }
 }
 
-// fn solve(func: fn(&str) -> bool) -> u64 {
-//     fs::read_to_string("inputs/day4_input")
-//         .unwrap()
-//         .split("\n")
-//         .map(|ranges| func(ranges) as u64)
-//         .sum()
-// }
+fn solve<F>(func: F) -> u64
+where
+    F: Fn(&str) -> bool,
+{
+    fs::read_to_string("inputs/day4_input")
+        .unwrap()
+        .split("\n")
+        .map(|ranges| func(ranges) as u64)
+        .sum()
+}
 
 pub fn solution() {
-    let result: u64 = fs::read_to_string("inputs/day4_input")
-        .unwrap()
-        .split("\n")
-        .map(|ranges| is_fully_contained(ranges) as u64)
-        .sum();
-    println!("Part1: {}", result);
-
-    let result: u64 = fs::read_to_string("inputs/day4_input")
-        .unwrap()
-        .split("\n")
-        .map(|ranges| is_overlap(ranges) as u64)
-        .sum();
-
-    println!("Part2: {}", result);
+    println!("Part1: {}", solve(is_fully_contained));
+    println!("Part2: {}", solve(is_overlap));
 }
 
 fn is_overlap(ranges: &str) -> bool {
