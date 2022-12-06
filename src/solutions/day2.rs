@@ -3,7 +3,7 @@ use std::fs;
 pub fn solution() {
     let result: u64 = fs::read_to_string("inputs/day2_input")
         .unwrap()
-        .split("\n")
+        .split('\n')
         .map(scores_part1)
         .sum();
 
@@ -11,7 +11,7 @@ pub fn solution() {
 
     let result: u64 = fs::read_to_string("inputs/day2_input")
         .unwrap()
-        .split("\n")
+        .split('\n')
         .map(scores_part2)
         .sum();
 

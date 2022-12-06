@@ -4,7 +4,7 @@ use std::fs;
 fn read_file() -> Vec<String> {
     fs::read_to_string("inputs/day3_input")
         .unwrap()
-        .split("\n")
+        .split('\n')
         .map(|string| string.to_string())
         .collect::<Vec<String>>()
 }
@@ -42,7 +42,7 @@ fn overlapping_character_group(groups: &[String]) -> char {
     for set in sets {
         intersection.retain(|e| set.contains(e));
     }
-    intersection.iter().next().unwrap().clone()
+    *intersection.iter().next().unwrap()
 }
 
 fn priority(character: char) -> u64 {
@@ -57,5 +57,5 @@ fn overlapping_character(halves: (&str, &str)) -> char {
     let first: HashSet<_> = HashSet::from_iter(halves.0.chars());
     let second: HashSet<_> = HashSet::from_iter(halves.1.chars());
 
-    first.intersection(&second).next().unwrap().clone()
+    *first.intersection(&second).next().unwrap()
 }

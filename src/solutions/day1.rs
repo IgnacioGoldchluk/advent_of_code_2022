@@ -11,15 +11,12 @@ pub fn solution() {
     calories.reverse();
 
     println!("Solution 1: {:?}", &calories[0]);
-    println!(
-        "Solution 2: {:?}",
-        &calories[0..3].into_iter().sum() as &u64
-    );
+    println!("Solution 2: {:?}", &calories[0..3].iter().sum() as &u64);
 }
 
 fn to_calories(calories: &str) -> u64 {
     calories
-        .split("\n")
+        .split('\n')
         .map(|val| val.parse::<u64>().unwrap())
         .sum()
 }

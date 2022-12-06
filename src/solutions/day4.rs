@@ -7,7 +7,7 @@ struct CleaningRange {
 
 impl CleaningRange {
     pub fn new(ranges: &str) -> Self {
-        let (start, finish) = ranges.split_once("-").unwrap();
+        let (start, finish) = ranges.split_once('-').unwrap();
         CleaningRange {
             start: start.parse::<u64>().unwrap(),
             finish: finish.parse::<u64>().unwrap(),
@@ -30,7 +30,7 @@ where
 {
     fs::read_to_string("inputs/day4_input")
         .unwrap()
-        .split("\n")
+        .split('\n')
         .map(|ranges| func(ranges) as u64)
         .sum()
 }
@@ -46,7 +46,7 @@ fn is_overlap(ranges: &str) -> bool {
 }
 
 fn to_cleaning_ranges(ranges: &str) -> (CleaningRange, CleaningRange) {
-    let (first, second) = ranges.split_once(",").unwrap();
+    let (first, second) = ranges.split_once(',').unwrap();
     (CleaningRange::new(first), CleaningRange::new(second))
 }
 

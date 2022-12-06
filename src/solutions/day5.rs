@@ -39,13 +39,13 @@ pub fn solution() {
     ];
     fs::read_to_string("inputs/day5_input")
         .unwrap()
-        .split("\n")
+        .split('\n')
         .map(Move::new)
         .fold(&mut initial_state, apply_move2);
     print_answer(&initial_state);
 }
 
-fn print_answer(state: &Vec<Vec<char>>) {
+fn print_answer(state: &[Vec<char>]) {
     let message: String = state.iter().skip(1).map(|v| v.last().unwrap()).collect();
     println!("{}", message);
 }
