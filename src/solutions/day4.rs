@@ -19,8 +19,8 @@ impl CleaningRange {
     }
 
     pub fn overlaps(&self, other: &CleaningRange) -> bool {
-        (other.start <= self.finish && other.start >= self.finish)
-            || (other.finish >= self.start && other.finish <= self.finish)
+        (self.finish >= other.start && self.finish <= other.finish)
+            || (self.start >= other.start && self.start <= other.finish)
     }
 }
 
