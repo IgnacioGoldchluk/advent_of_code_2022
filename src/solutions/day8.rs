@@ -41,9 +41,9 @@ where
 
 fn scenic_score(coords: &(i32, i32), val: i32, grid: &Grid) -> i32 {
     let (x, y) = coords;
-    score(val, grid, (0..*y).map(|col| (*x, col)))
+    score(val, grid, (0..*y).rev().map(|col| (*x, col)))
         * score(val, grid, (*y + 1..).map(|col| (*x, col)))
-        * score(val, grid, (0..*x).map(|row| (row, *y)))
+        * score(val, grid, (0..*x).rev().map(|row| (row, *y)))
         * score(val, grid, (*x + 1..).map(|row| (row, *y)))
 }
 
@@ -52,17 +52,20 @@ where
     I: Iterator<Item = (i32, i32)>,
 {
     let result = points
-        .take_while(|point| grid.contains_key(&point))
-        .try_fold(0, |acc, point| {
-            if *grid.get(&point).unwrap() >= val {
-                Err(acc)
-            } else {
-                Ok(acc + 1)
+        .into_iter()
+        .try_fold(0, |acc, point| match grid.get(&point) {
+            Some(number) => {
+                if *number < val {
+                    Ok(acc + 1)
+                } else {
+                    Err(acc + 1)
+                }
             }
+            None => Err(acc),
         });
 
     match result {
-        Err(acc) => acc + 1,
+        Err(acc) => acc,
         Ok(acc) => acc,
     }
 }
