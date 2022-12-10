@@ -34,7 +34,7 @@ where
     I: Iterator<Item = (i32, i32)>,
 {
     points
-        .take_while(|point| grid.contains_key(&point))
+        .take_while(|point| grid.contains_key(point))
         .map(|point| grid.get(&point).unwrap())
         .all(|x| *x < val)
 }

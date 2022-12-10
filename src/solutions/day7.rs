@@ -11,7 +11,7 @@ struct Node {
 
 impl Node {
     fn is_directory(&self) -> bool {
-        self.children.len() > 0
+        !self.children.is_empty()
     }
 }
 
@@ -62,7 +62,7 @@ pub fn solution() {
         .unwrap()
         .lines()
         .for_each(|line| {
-            let splited: Vec<&str> = line.split(" ").collect();
+            let splited: Vec<&str> = line.split(' ').collect();
             match splited[0] {
                 "$" => match splited[1] {
                     "cd" => match splited[2] {
