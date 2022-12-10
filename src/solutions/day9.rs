@@ -37,11 +37,7 @@ fn to_move(line: &String) -> Vec<(i32, i32)> {
     vec![dir; repeats.parse::<usize>().unwrap()]
 }
 
-fn apply_movement(
-    movement: (i32, i32),
-    rope: &mut Vec<(i32, i32)>,
-    seen: &mut HashSet<(i32, i32)>,
-) {
+fn apply_movement(movement: (i32, i32), rope: &mut Vec<Point>, seen: &mut HashSet<Point>) {
     rope[0].0 += movement.0;
     rope[0].1 += movement.1;
 
