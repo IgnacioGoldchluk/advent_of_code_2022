@@ -55,6 +55,15 @@ const MAX_DIR_SIZE: usize = 100000;
 const TOTAL_DISK_SIZE: usize = 70000000;
 const UPDATE_SIZE: usize = 30000000;
 
+// 67 ~                 "$" => if splited[1] == "cd" { match splited[2] {
+//     68 +                     ".." => {
+//     69 +                         current = file_tree.node(current).parent;
+//     70 +                     }
+//     71 +                     _ => {
+//     72 +                         current = file_tree.insert(0, current);
+//     73 +                     }
+//     74 ~                 } }
+
 pub fn solution() {
     let mut file_tree = FileTree { files: vec![] };
     let mut current: Option<usize> = None;
@@ -64,17 +73,18 @@ pub fn solution() {
         .for_each(|line| {
             let splited: Vec<&str> = line.split(' ').collect();
             match splited[0] {
-                "$" => match splited[1] {
-                    "cd" => match splited[2] {
-                        ".." => {
-                            current = file_tree.node(current).parent;
+                "$" => {
+                    if splited[1] == "cd" {
+                        match splited[2] {
+                            ".." => {
+                                current = file_tree.node(current).parent;
+                            }
+                            _ => {
+                                current = file_tree.insert(0, current);
+                            }
                         }
-                        _ => {
-                            current = file_tree.insert(0, current);
-                        }
-                    },
-                    _ => {}
-                },
+                    }
+                }
                 "dir" => {}
                 _ => {
                     file_tree.insert(splited[0].parse::<usize>().unwrap(), current);
