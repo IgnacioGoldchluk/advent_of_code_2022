@@ -1,63 +1,50 @@
 use std::fs;
 
+use itertools::Itertools;
+
 pub fn solution() {
+    let operations = fs::read_to_string("inputs/day10_input").unwrap();
+
     let cycles = vec![20, 60, 100, 140, 180, 220];
+    let mut register_values = vec![0]; // start with dummy value so we don't off by one later.
 
-    let state_by_cycle = fs::read_to_string("inputs/day10_input")
-        .unwrap()
-        .lines()
-        .flat_map(to_instructions)
-        .map(|instruction| to_cycle_value(instruction, &mut state))
-        .collect::<Vec<(i64, i64)>>();
+    let mut x = 1;
+    for operation in operations.lines() {
+        match operation.split_once(' ') {
+            Some((_, value)) => {
+                register_values.push(x);
+                register_values.push(x);
+                x += value.parse::<i32>().unwrap();
+            }
+            None => register_values.push(x),
+        }
+    }
 
-    let result: i64 = state_by_cycle
+    let result: i32 = register_values
         .iter()
-        .filter(|(_x, cycle)| cycles.iter().any(|valid_cycles| valid_cycles == cycle))
-        .map(|(x, cycle)| x * cycle)
+        .enumerate()
+        .filter(|(idx, _val)| cycles.iter().contains(idx))
+        .map(|(idx, val)| idx as i32 * val)
         .sum();
 
     println!("{}", result);
 
-    let screen = state_by_cycle
+    register_values
         .iter()
-        .map(dot_or_numeral)
-        .collect::<Vec<char>>();
-
-    print_screen(&screen);
+        .enumerate()
+        .map(to_character)
+        .chunks(40)
+        .into_iter()
+        .for_each(|line| println!("{}", line.into_iter().collect::<String>()));
 }
 
-fn dot_or_numeral(state_cycle: &(i64, i64)) -> char {
-    let (state, cycle) = *state_cycle;
-    println!("{:?}", state_cycle);
-    if state - 1 <= (cycle - 2 % 40) && (cycle % 40) <= state + 1 {
+fn to_character(idx_val: (usize, &i32)) -> char {
+    let (idx, val) = idx_val;
+    let idx = idx as i32;
+
+    if (idx % 40) >= *val && (idx % 40) <= *val + 2 {
         '#'
     } else {
         '.'
-    }
-}
-
-fn print_screen(screen: &Vec<char>) {
-    screen
-        .chunks(40)
-        .map(|chunk| -> String { chunk.into_iter().collect() })
-        .for_each(|chunk| println!("{}", chunk));
-}
-
-fn to_cycle_value(instruction: Instruction, state: &mut State) -> (i64, i64) {
-    match instruction {
-        Instruction::Noop => {}
-        Instruction::Addx(value) => state.x += value,
-    }
-    state.cycle += 1;
-    (state.x, state.cycle)
-}
-
-fn to_instructions(line: &str) -> Vec<Instruction> {
-    match line {
-        "noop" => vec![Instruction::Noop],
-        _addx => vec![
-            Instruction::Noop,
-            Instruction::Addx(line.replace("addx ", "").parse::<i64>().unwrap()),
-        ],
     }
 }
