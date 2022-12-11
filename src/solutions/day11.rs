@@ -99,8 +99,7 @@ impl Monkey {
         let mut operations: Vec<(usize, u64)> = Vec::new();
         self.items.iter().for_each(|item| {
             let worry_level = (self.operation)(*item) / divisor;
-            let test = worry_level % self.test == 0;
-            let to_throw = self.throw.get(&test).unwrap();
+            let to_throw = self.throw.get(&(worry_level % self.test == 0)).unwrap();
             operations.push((*to_throw, worry_level % self.gcd));
             self.inspected += 1;
         });
@@ -109,30 +108,21 @@ impl Monkey {
     }
 }
 
-fn assign_gcd(monkeys: &mut [Monkey]) {
-    let gcd: u64 = monkeys.iter().map(|monkey| monkey.gcd).product();
-    for monkey in monkeys.iter_mut() {
-        monkey.gcd = gcd;
-    }
-}
-
-fn get_monkeys(filename: &str) -> Vec<Monkey> {
+fn parse(filename: &str) -> Vec<Monkey> {
     let mut monkeys: Vec<Monkey> = fs::read_to_string(filename)
         .unwrap()
         .split("\n\n")
         .map(Monkey::new)
         .collect();
+    let gcd: u64 = monkeys.iter().map(|monkey| monkey.test).product();
+    monkeys.iter_mut().for_each(|monkey| monkey.gcd = gcd);
 
-    assign_gcd(&mut monkeys);
     monkeys
 }
 
 pub fn solution() {
-    println!("{}", solve(&mut get_monkeys("inputs/day11_input"), 20, 3));
-    println!(
-        "{}",
-        solve(&mut get_monkeys("inputs/day11_input"), 10000, 1)
-    );
+    println!("{}", solve(&mut parse("inputs/day11_input"), 20, 3));
+    println!("{}", solve(&mut parse("inputs/day11_input"), 10000, 1));
 }
 
 fn solve(monkeys: &mut Vec<Monkey>, rounds: u64, divisor: u64) -> u64 {
