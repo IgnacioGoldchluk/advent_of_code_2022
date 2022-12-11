@@ -15,18 +15,13 @@ struct Monkey {
 
 impl Monkey {
     pub fn new(monkey_info: &str) -> Self {
-        let items = Monkey::parse_items(monkey_info);
-        let operation = Monkey::parse_operation(monkey_info);
-        let test = Monkey::parse_test(monkey_info);
-        let throw = Monkey::parse_throw(monkey_info);
-
         Monkey {
-            items,
-            operation,
-            test,
-            throw,
+            items: Monkey::parse_items(monkey_info),
+            operation: Monkey::parse_operation(monkey_info),
+            test: Monkey::parse_test(monkey_info),
+            throw: Monkey::parse_throw(monkey_info),
             inspected: 0,
-            gcd: test,
+            gcd: 0,
         }
     }
 
