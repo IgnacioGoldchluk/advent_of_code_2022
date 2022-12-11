@@ -114,26 +114,37 @@ impl Monkey {
     }
 }
 
-fn assign_gcd(monkeys: &mut Vec<Monkey>) {
+fn assign_gcd(monkeys: &mut [Monkey]) {
     let gcd: u64 = monkeys.iter().map(|monkey| monkey.gcd).product();
     for monkey in monkeys.iter_mut() {
         monkey.gcd = gcd;
     }
 }
 
-pub fn solution() {
-    let mut monkeys: Vec<Monkey> = fs::read_to_string("inputs/day11_input")
+fn get_monkeys(filename: &str) -> Vec<Monkey> {
+    let mut monkeys: Vec<Monkey> = fs::read_to_string(filename)
         .unwrap()
         .split("\n\n")
         .map(Monkey::new)
         .collect();
 
     assign_gcd(&mut monkeys);
+    monkeys
+}
 
-    for _round in 0..20 {
+pub fn solution() {
+    println!("{}", solve(&mut get_monkeys("inputs/day11_input"), 20, 3));
+    println!(
+        "{}",
+        solve(&mut get_monkeys("inputs/day11_input"), 10000, 1)
+    );
+}
+
+fn solve(monkeys: &mut Vec<Monkey>, rounds: u64, divisor: u64) -> u64 {
+    for _round in 0..rounds {
         for idx in 0..monkeys.len() {
             let monkey = &mut monkeys[idx];
-            let pushes = monkey.perform_round(3);
+            let pushes = monkey.perform_round(divisor);
             for (target, val) in pushes.iter() {
                 let other_monkey = &mut monkeys[*target];
                 other_monkey.items.push(*val);
@@ -141,13 +152,11 @@ pub fn solution() {
         }
     }
 
-    let result: u64 = monkeys
+    monkeys
         .iter()
         .map(|monkey| monkey.inspected)
         .sorted()
         .rev()
         .take(2)
-        .product();
-
-    println!("{}", result)
+        .product()
 }
