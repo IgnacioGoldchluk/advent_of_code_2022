@@ -26,6 +26,7 @@ fn main() {
         9 => solutions::day9::solution(),
         10 => solutions::day10::solution(),
         11 => solutions::day11::solution(),
+        12 => solutions::day12::solution(),
         _ => unreachable!(),
     }
 }

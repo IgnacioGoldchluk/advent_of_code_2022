@@ -20,13 +20,13 @@ fn solve(moves: &[String], length: usize) -> usize {
 
     moves
         .iter()
-        .flat_map(to_move)
+        .flat_map(|string| to_move(&string[..]))
         .for_each(|movement| apply_movement(movement, &mut rope, &mut visited));
 
     visited.len()
 }
 
-fn to_move(line: &String) -> Vec<(i32, i32)> {
+fn to_move(line: &str) -> Vec<(i32, i32)> {
     let (dir, repeats) = match line.split_once(' ').unwrap() {
         ("R", n) => ((1, 0), n),
         ("L", n) => ((-1, 0), n),
