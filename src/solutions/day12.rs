@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs;
+use rayon::prelude::*;
 
 type Grid = HashMap<(i64, i64), char>;
 
@@ -11,7 +12,7 @@ pub fn solution() {
     println!("Part1: {}", a_star_algo(&start, &target, &grid));
 
     let result = grid
-        .iter()
+        .par_iter()
         .filter(|(_k, v)| **v == 'a')
         .map(|(pos, _char)| a_star_algo(pos, &target, &grid))
         .min()
