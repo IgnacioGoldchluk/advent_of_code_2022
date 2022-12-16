@@ -16,8 +16,7 @@ fn get_grid(filename: &str) -> Grid {
     fs::read_to_string(filename)
         .unwrap()
         .lines()
-        .map(to_points)
-        .flatten()
+        .flat_map(to_points)
         .for_each(|point| {
             grid.insert(point, Element::Rock);
         });
@@ -55,7 +54,7 @@ fn drop(grid: &mut Grid, highest: i32) -> bool {
     let mut start = (500, 0);
 
     while start.1 <= highest {
-        let new = move_one(&grid, &start);
+        let new = move_one(grid, &start);
         if start == new {
             break;
         } else {
@@ -91,12 +90,10 @@ fn move_one(grid: &Grid, point: &(i32, i32)) -> (i32, i32) {
     let left_down = (point.0 - 1, point.1 + 1);
     let right_down = (point.0 + 1, point.1 + 1);
 
-    vec![below, left_down, right_down]
+    *vec![below, left_down, right_down]
         .iter()
-        .filter(|x| *grid.get(&x).unwrap_or(&Element::Air) == Element::Air)
-        .next()
+        .find(|x| *grid.get(x).unwrap_or(&Element::Air) == Element::Air)
         .unwrap_or(point)
-        .clone()
 }
 
 fn to_points(line: &str) -> Vec<Point> {
