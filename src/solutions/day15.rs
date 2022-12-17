@@ -1,7 +1,6 @@
-use itertools::Itertools;
-use rayon::prelude::*;
 use regex::Regex;
-use rustc_hash::FxHashSet;
+use std::boxed::Box;
+use std::collections::HashSet;
 use std::fs;
 use std::ops::Range;
 
@@ -21,32 +20,9 @@ pub fn solution() {
         .count();
     println!("Part1: {cleared}");
 
-    let freq = find_unique_parallel(&sensor_beacon, 4_000_000);
+    let freq = find_unique(&sensor_beacon, (0, 4_000_000));
 
     println!("Part2: {freq}");
-}
-
-fn find_unique_parallel(sensor_beacon: &[(Point, Point)], max: i64) -> i64 {
-    let mut set = FxHashSet::default();
-    for (s, b) in sensor_beacon {
-        set.insert(s);
-        set.insert(b);
-    }
-    let (x, y) = (0..=max)
-        .cartesian_product(0..=max)
-        .par_bridge()
-        .filter(|x| !set.contains(x))
-        .inspect(|(x, y)| print_if_divisible(*x, *y))
-        .find_first(|p| !set.contains(p) && !is_cleared(p, &sensor_beacon))
-        .unwrap();
-    (x * 4_000_000) + y
-}
-
-fn print_if_divisible(x: i64, y: i64) {
-    if x % 10_000 == 0 && y % 10_000 == 0 {
-        println!("{x}, {y}");
-    } else {
-    }
 }
 
 fn extreme_points(sensor_beacon: &[(Point, Point)]) -> Range<i64> {
@@ -59,6 +35,36 @@ fn extreme_points(sensor_beacon: &[(Point, Point)]) -> Range<i64> {
     let min_x = sensor_beacon.iter().map(|(s, _b)| s.0).min().unwrap();
     let max_x = sensor_beacon.iter().map(|(s, _b)| s.0).max().unwrap();
     min_x - max_manhattan..max_x + max_manhattan
+}
+
+fn find_unique(sensor_beacon: &[(Point, Point)], limits: (i64, i64)) -> i64 {
+    let mut set = HashSet::new();
+    for (s, b) in sensor_beacon {
+        set.insert(s);
+        set.insert(b);
+    }
+
+    let (x, y) = sensor_beacon
+        .iter()
+        .flat_map(external_borders)
+        .filter(|point| !set.contains(point) && within_limits(point, &limits))
+        .find(|point| !is_cleared(point, &sensor_beacon))
+        .unwrap();
+    (x * 4_000_000) + y
+}
+
+fn within_limits(point: &Point, limits: &(i64, i64)) -> bool {
+    point.0 <= limits.1 && point.0 >= limits.0 && point.1 <= limits.1 && point.1 >= limits.0
+}
+
+fn external_borders((sensor, beacon): &(Point, Point)) -> Box<dyn Iterator<Item = Point> + '_> {
+    let distance = manhattan_distance(sensor, beacon) + 1;
+    let slope_1 = (0..=distance).map(move |x| (sensor.0 - x, sensor.1 - (distance - x)));
+    let slope_2 = (0..=distance).map(move |x| (sensor.0 - x, sensor.1 + (distance - x)));
+    let slope_3 = (0..=distance).map(move |x| (sensor.0 + x, sensor.1 + (distance - x)));
+    let slope_4 = (0..=distance).map(move |x| (sensor.0 + x, sensor.1 - (distance - x)));
+
+    Box::new(slope_1.chain(slope_2).chain(slope_3).chain(slope_4))
 }
 
 fn is_cleared(point: &Point, sensor_beacon: &[(Point, Point)]) -> bool {
